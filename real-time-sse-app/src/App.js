@@ -36,10 +36,21 @@ class App extends Component {
   }
 
 
-  componentDidMount(){
-    this.eventSource.onmessage = e => {
-      this.updateFlightState(JSON.parse(e.data));
-    }
+  // componentDidMount(){
+  //   this.eventSource.onmessage = e => {
+  //     this.updateFlightState(JSON.parse(e.data));
+  //   }
+  // }
+
+  componentDidMount() {
+
+    this.eventSource.addEventListener("flightStateUpdate", e =>
+      this.updateFlightState(JSON.parse(e.data))
+    );
+
+    this.eventSource.addEventListener("flightRemoval", e =>
+      this.removeFlight(JSON.parse(e.data))
+    );
   }
 
 
@@ -53,6 +64,14 @@ class App extends Component {
     });
 
     this.setState(Object.assign({},{data: newData}));
+  }
+
+  removeFlight(flightInfo) {
+    const newData = this.state.data.filter(
+      item => item.flight !== flightInfo.flight
+    );
+
+    this.setState(Object.assign({}, { data: newData }));
   }
 
   render() {
