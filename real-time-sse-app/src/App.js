@@ -36,12 +36,15 @@ class App extends Component {
   }
 
 
+  /* Basic event listening */
   // componentDidMount(){
   //   this.eventSource.onmessage = e => {
   //     this.updateFlightState(JSON.parse(e.data));
   //   }
   // }
 
+
+  /* With event identifying mechanism */
   componentDidMount() {
 
     this.eventSource.addEventListener("flightStateUpdate", e =>
@@ -54,6 +57,7 @@ class App extends Component {
   }
 
 
+  /* Update flight state */
   updateFlightState(flightState){
     let newData  = this.state.data.map(item => {
       if(item.flight === flightState.flight){
@@ -66,6 +70,8 @@ class App extends Component {
     this.setState(Object.assign({},{data: newData}));
   }
 
+
+  /* Remove flight details */
   removeFlight(flightInfo) {
     const newData = this.state.data.filter(
       item => item.flight !== flightInfo.flight
@@ -74,13 +80,37 @@ class App extends Component {
     this.setState(Object.assign({}, { data: newData }));
   }
 
+  // /* Basic render */
+  // render() {
+  //   return (
+  //     <div className="App">
+  //       <ReactTable data={this.state.data} columns={this.columns} />
+  //     </div>
+  //   );
+  // }
+
+
+
+  /* Stop event streaming */
+  stopUpdates() {
+    this.eventSource.close();
+  }
+
+
+  /* Render with stop button */
   render() {
     return (
       <div className="App">
-        <ReactTable data={this.state.data} columns={this.columns} />
+        <button onClick={() => this.stopUpdates()}>Stop updates</button>
+        <ReactTable
+          data={this.state.data}
+          columns={this.columns}
+        />
       </div>
     );
   }
+
+
 }
 
 export default App;
